@@ -6,34 +6,51 @@ import { ChatMessageDto } from '../models/ChatMessageDto';
 })
 export class WebSocketService {
 
-  webSocket: WebSocket ;
+  chatWebSocket: WebSocket;
+  wakeWebSocket: WebSocket;
   chatmessages: ChatMessageDto[] = [];
+
   constructor() {
-    // this.webSocket = new WebSocket('wss://springtestserver.herokuapp.com/chat');
-    // this.webSocket = new WebSocket('wss://localhost:8080/wakeUp');
-    this.webSocket = new WebSocket('wss://localhost:8080/chat');
+    this.chatWebSocket = new WebSocket('wss://springtestserver.herokuapp.com/chat');
+    this.wakeWebSocket = new WebSocket('wss://springtestserver.herokuapp.com/wake');
+    // this.chatWebSocket = new WebSocket('ws://localhost:8080/chat');
+    // this.wakeWebSocket = new WebSocket('ws://localhost:8080/wake');
   }
 
   // tslint:disable-next-line:typedef
-  public openWebsocket(){
-    this.webSocket.onopen = (event) => {
+  public openWebsocket() {
+    this.chatWebSocket.onopen = (event) => {
       console.log('open: ', event);
     };
-    this.webSocket.onmessage = (event) => {
+    this.wakeWebSocket.onopen = (event) => {
+      console.log('wakeWebSocket open: ', event);
+      setInterval(() => this.wakeUpWebSocket(), 30000);
+    };
+    this.chatWebSocket.onmessage = (event) => {
       const chatMessageDto = JSON.parse(event.data);
       this.chatmessages.push(chatMessageDto);
     };
-    this.webSocket.onclose = (event) => {
+    this.chatWebSocket.onclose = (event) => {
       console.log('close: ', event);
     };
   }
+
   // tslint:disable-next-line:typedef
-  public sendMessage(chatMessageDto: ChatMessageDto){
-    this.webSocket.send(JSON.stringify(chatMessageDto));
+  public sendMessage(chatMessageDto: ChatMessageDto) {
+    this.chatWebSocket.send(JSON.stringify(chatMessageDto));
     console.log('ChatMessageDto: ', ChatMessageDto);
   }
+
   // tslint:disable-next-line:typedef
-  public closeWebSocket(){
-    this.webSocket.close();
+  public closeWebSocket() {
+    this.chatWebSocket.close();
   }
+
+  // tslint:disable-next-line:typedef
+  public wakeUpWebSocket() {
+    this.wakeWebSocket.send('');
+  }
+
+
 }
+
