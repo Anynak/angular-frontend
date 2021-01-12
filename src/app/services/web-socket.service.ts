@@ -11,8 +11,8 @@ export class WebSocketService {
   chatmessages: ChatMessageDto[] = [];
 
   constructor() {
-    this.chatWebSocket = new WebSocket('wss://springtestserver.herokuapp.com/chat');
-    this.wakeWebSocket = new WebSocket('wss://springtestserver.herokuapp.com/wake');
+     this.chatWebSocket = new WebSocket('wss://springtestserver.herokuapp.com/chat');
+     this.wakeWebSocket = new WebSocket('wss://springtestserver.herokuapp.com/wake');
     // this.chatWebSocket = new WebSocket('ws://localhost:8080/chat');
     // this.wakeWebSocket = new WebSocket('ws://localhost:8080/wake');
   }
@@ -24,7 +24,7 @@ export class WebSocketService {
     };
     this.wakeWebSocket.onopen = (event) => {
       console.log('wakeWebSocket open: ', event);
-      setInterval(() => this.wakeUpWebSocket(), 30000);
+      setInterval(() => this.wakeUpWebSocket(), 2000);
     };
     this.chatWebSocket.onmessage = (event) => {
       const chatMessageDto = JSON.parse(event.data);
@@ -48,7 +48,7 @@ export class WebSocketService {
 
   // tslint:disable-next-line:typedef
   public wakeUpWebSocket() {
-    this.wakeWebSocket.send('');
+    this.chatWebSocket.send('{"user":"","message":""}');
   }
 
 
